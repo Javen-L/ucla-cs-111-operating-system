@@ -1,0 +1,163 @@
+Total: 776 samples
+     555  71.5%  71.5%      774  99.7% func_s
+     162  20.9%  92.4%      162  20.9% __strcmp_sse42
+      26   3.4%  95.7%      133  17.1% SortedList_lookup
+      24   3.1%  98.8%       83  10.7% SortedList_insert
+       4   0.5%  99.4%        4   0.5% _init
+       2   0.3%  99.6%        2   0.3% hash_function
+       1   0.1%  99.7%        1   0.1% 0x00007ffdb16e9988
+       1   0.1%  99.9%      775  99.9% __clone
+       1   0.1% 100.0%        1   0.1% __munmap
+       0   0.0% 100.0%        1   0.1% __GI___clock_gettime
+       0   0.0% 100.0%        1   0.1% __libc_start_main
+       0   0.0% 100.0%        1   0.1% _start
+       0   0.0% 100.0%        1   0.1% main
+       0   0.0% 100.0%      774  99.7% start_thread
+ROUTINE ====================== func_s in /u/cs/ugrad/bingxin/lab2b/lab2_list.c
+   555    774 Total samples (flat / cumulative)
+     .      .   97: 		}
+     .      .   98: 		pthread_mutex_unlock(&mutex[key]);
+     .      .   99: 	}
+     .      .  100: 	return NULL;
+     .      .  101: }
+---
+     .      .  102: void* func_s(void* id){
+     .      .  103: 	long long i, j, k;
+     .      .  104: 	struct timespec start_time;
+     .      .  105: 	struct timespec end_time;
+     .      .  106: 	int len_sum = 0;
+     .      .  107: 
+     .      .  108: 	for (i = 0; i < niteration; i++){
+     .      .  109: 		long long ns;
+     .      1  110: 		unsigned int key = hash_function(element[(*(int*)id)*niteration+i].key);
+     .      .  111: 
+     .      1  112: 		clock_gettime(CLOCK_MONOTONIC, &start_time);
+   273    273  113: 		while(__sync_lock_test_and_set(&lock[key], 1));
+     .      .  114: 		clock_gettime(CLOCK_MONOTONIC, &end_time);
+     .      .  115: 
+     .      .  116: 		ns = (end_time.tv_sec - start_time.tv_sec)*1000000000 + (end_time.tv_nsec - start_time.tv_nsec);
+     .      .  117: 		ns_sum_s += ns;
+     .      .  118: 
+     .     83  119: 		SortedList_insert(&mylist[key], &element[(*(int*)id)*niteration+i]);
+     .      .  120: 		__sync_lock_release(&lock[key]);
+     .      .  121: 		
+     .      .  122: 	}
+     .      .  123: 
+     .      .  124: 	for (k = 0; k < nlist; k++){
+     .      .  125: 		long long ns;
+     .      .  126: 
+     .      .  127: 		clock_gettime(CLOCK_MONOTONIC, &start_time);
+     .      .  128: 		while(__sync_lock_test_and_set(&lock[k], 1));
+     .      .  129: 		clock_gettime(CLOCK_MONOTONIC, &end_time);
+     .      .  130: 
+     .      .  131: 		ns = (end_time.tv_sec - start_time.tv_sec)*1000000000 + (end_time.tv_nsec - start_time.tv_nsec);
+     .      .  132: 		ns_sum_s += ns;
+     .      .  133: 
+     .      .  134: 	}
+     .      .  135: 	for(k = 0; k < nlist; k++){
+     .      .  136: 		len_sum += SortedList_length(&mylist[k]);
+     .      .  137: 	}
+     .      .  138: 	for(k = 0; k < nlist; k++){
+     .      .  139: 		__sync_lock_release(&lock[k]);
+     .      .  140: 	}
+     .      .  141: 
+     .      .  142: 	for (j = 0; j < niteration; j++){
+     .      .  143: 		long long ns;
+     .      1  144: 		unsigned int key = hash_function(element[(*(int*)id)*niteration+j].key);
+     .      .  145: 
+     .      .  146: 		clock_gettime(CLOCK_MONOTONIC, &start_time);
+   282    282  147: 		while(__sync_lock_test_and_set(&lock[key], 1));
+     .      .  148: 		clock_gettime(CLOCK_MONOTONIC, &end_time);
+     .      .  149: 
+     .      .  150: 		ns = (end_time.tv_sec - start_time.tv_sec)*1000000000 + (end_time.tv_nsec - start_time.tv_nsec);
+     .      .  151: 		ns_sum_s += ns;
+     .      .  152: 
+     .    133  153: 		SortedListElement_t* del_ele = SortedList_lookup(&mylist[key], element[(*(int*)id)*niteration+j].key);
+     .      .  154: 		if(SortedList_delete(del_ele)){
+     .      .  155: 			fprintf(stderr, "Corrupted\n");
+     .      .  156: 			exit(2);
+     .      .  157: 		}
+     .      .  158: 		__sync_lock_release(&lock[key]);
+     .      .  159: 	}
+     .      .  160: 	return NULL;
+     .      .  161: }
+---
+     .      .  162: void* func_none(void* id){
+     .      .  163: 	long long i, j, k;
+     .      .  164: 	//struct timespec start_time;
+     .      .  165: 	//struct timespec end_time;
+     .      .  166: 	int len_sum = 0;
+ROUTINE ====================== func_s in /u/cs/ugrad/bingxin/lab2b/lab2_list.c
+   555    774 Total samples (flat / cumulative)
+     .      .   97: 		}
+     .      .   98: 		pthread_mutex_unlock(&mutex[key]);
+     .      .   99: 	}
+     .      .  100: 	return NULL;
+     .      .  101: }
+---
+     .      .  102: void* func_s(void* id){
+     .      .  103: 	long long i, j, k;
+     .      .  104: 	struct timespec start_time;
+     .      .  105: 	struct timespec end_time;
+     .      .  106: 	int len_sum = 0;
+     .      .  107: 
+     .      .  108: 	for (i = 0; i < niteration; i++){
+     .      .  109: 		long long ns;
+     .      1  110: 		unsigned int key = hash_function(element[(*(int*)id)*niteration+i].key);
+     .      .  111: 
+     .      1  112: 		clock_gettime(CLOCK_MONOTONIC, &start_time);
+   273    273  113: 		while(__sync_lock_test_and_set(&lock[key], 1));
+     .      .  114: 		clock_gettime(CLOCK_MONOTONIC, &end_time);
+     .      .  115: 
+     .      .  116: 		ns = (end_time.tv_sec - start_time.tv_sec)*1000000000 + (end_time.tv_nsec - start_time.tv_nsec);
+     .      .  117: 		ns_sum_s += ns;
+     .      .  118: 
+     .     83  119: 		SortedList_insert(&mylist[key], &element[(*(int*)id)*niteration+i]);
+     .      .  120: 		__sync_lock_release(&lock[key]);
+     .      .  121: 		
+     .      .  122: 	}
+     .      .  123: 
+     .      .  124: 	for (k = 0; k < nlist; k++){
+     .      .  125: 		long long ns;
+     .      .  126: 
+     .      .  127: 		clock_gettime(CLOCK_MONOTONIC, &start_time);
+     .      .  128: 		while(__sync_lock_test_and_set(&lock[k], 1));
+     .      .  129: 		clock_gettime(CLOCK_MONOTONIC, &end_time);
+     .      .  130: 
+     .      .  131: 		ns = (end_time.tv_sec - start_time.tv_sec)*1000000000 + (end_time.tv_nsec - start_time.tv_nsec);
+     .      .  132: 		ns_sum_s += ns;
+     .      .  133: 
+     .      .  134: 	}
+     .      .  135: 	for(k = 0; k < nlist; k++){
+     .      .  136: 		len_sum += SortedList_length(&mylist[k]);
+     .      .  137: 	}
+     .      .  138: 	for(k = 0; k < nlist; k++){
+     .      .  139: 		__sync_lock_release(&lock[k]);
+     .      .  140: 	}
+     .      .  141: 
+     .      .  142: 	for (j = 0; j < niteration; j++){
+     .      .  143: 		long long ns;
+     .      1  144: 		unsigned int key = hash_function(element[(*(int*)id)*niteration+j].key);
+     .      .  145: 
+     .      .  146: 		clock_gettime(CLOCK_MONOTONIC, &start_time);
+   282    282  147: 		while(__sync_lock_test_and_set(&lock[key], 1));
+     .      .  148: 		clock_gettime(CLOCK_MONOTONIC, &end_time);
+     .      .  149: 
+     .      .  150: 		ns = (end_time.tv_sec - start_time.tv_sec)*1000000000 + (end_time.tv_nsec - start_time.tv_nsec);
+     .      .  151: 		ns_sum_s += ns;
+     .      .  152: 
+     .    133  153: 		SortedListElement_t* del_ele = SortedList_lookup(&mylist[key], element[(*(int*)id)*niteration+j].key);
+     .      .  154: 		if(SortedList_delete(del_ele)){
+     .      .  155: 			fprintf(stderr, "Corrupted\n");
+     .      .  156: 			exit(2);
+     .      .  157: 		}
+     .      .  158: 		__sync_lock_release(&lock[key]);
+     .      .  159: 	}
+     .      .  160: 	return NULL;
+     .      .  161: }
+---
+     .      .  162: void* func_none(void* id){
+     .      .  163: 	long long i, j, k;
+     .      .  164: 	//struct timespec start_time;
+     .      .  165: 	//struct timespec end_time;
+     .      .  166: 	int len_sum = 0;

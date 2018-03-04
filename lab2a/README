@@ -1,0 +1,73 @@
+NAME: Bingxin Zhu
+EMAIL: bingxinzhu95@gmail.com
+ID: 704845969
+
+content in this homework:
+1 lab2a-add.c
+2 lab2a-list.c
+3 SortedList.h
+4 SortedList.c
+5 Makefile
+6 README
+7 lab2_add.csv
+8 lab2_list.csv
+9 lab2_add-1.png
+10 lab2_add-2.png
+11 lab2_add-3.png
+12 lab2_add-4.png
+13 lab2_add-5.png
+14 lab2_list-1.png
+15 lab2_list-2.png
+16 lab2_list-3.png
+17 lab2_list-4.png
+
+QUESTION 2.1.1 - causing conflicts:
+Why does it take many iterations before errors are seen?
+Why does a significantly smaller number of iterations so seldom fail?
+
+It takes many iterations before errors are seen is because it is really expensive to create a thread and if we are only using a small number of iterations. Compared to the time we are using to create a thread, the time we used to do iterations is much more less. In that case, a thread may already finished after another thread being created, then we will see less error. If we are using a large number of iterations and we are going to ensure that many threads are running at the same time, then we get more possibilities to get race condition
+
+
+QUESTION 2.1.2 - cost of yielding:
+Why are the --yield runs so much slower?
+Where is the additional time going?
+Is it possible to get valid per-operation timings if we are using the --yield option?
+If so, explain how. If not, explain why not.
+
+Because —yields called sched_yield() which calls thread to relinquish the CPU. The thread is moved to the end of the queue and a new thread gets to run. Then it increases the number of context switch.
+No, it is actually impossible to get valid per-operation timings because the wall time is the time for the whole process, but we can’t tell the portion of the wall time that is spent on yield part.
+
+
+QUESTION 2.1.3 - measurement errors:
+Why does the average cost per operation drop with increasing iterations?
+If the cost per iteration is a function of the number of iterations, how do we know how many iterations to run (or what the "correct" cost is)?
+Because it is expensive to create a thread, since we have more iterations, the cost of a new thread will e amortized over each iteration. 
+If so, then we should increase the iterations until the time per operation is stable, then could figure out the cost of creating a thread is amortized to each iterations and we can get the answer.
+
+
+QUESTION 2.1.4 - costs of serialization:
+Why do all of the options perform similarly for low numbers of threads?
+Why do the three protected operations slow down as the number of threads rises?
+Because there are a small number of threads and they don’t have to wait for a lock so they could quickly get the lock
+When the number of threads increase, threads then need to wait others to release the lock, then the protected operations slow down.
+
+QUESTION 2.2.1 - scalability of Mutex
+Compare the variation in time per mutex-protected operation vs the number of threads in Part-1 (adds) and Part-2 (sorted lists).
+Comment on the general shapes of the curves, and explain why they have this shape.
+Comment on the relative rates of increase and differences in the shapes of the curves, and offer an explanation for these differences.
+
+The variation in time per mutex-protected operation in part-1 and Part-2 both increasing。 It increases because more threads will leads to more threads accessing the critical section. So more time spend on mutex lock, then increasing the cost of per operation.
+
+The list rate of increasing is faster than add. That may because the list has larger critical block than add, then means that the lock will be held longer than add which resulting in longer waiting time. 
+
+QUESTION 2.2.2 - scalability of spin locks
+
+Compare the variation in time per protected operation vs the number of threads for list operations protected by Mutex vs Spin locks. Comment on the general shapes of the curves, and explain why they have this shape.
+Comment on the relative rates of increase and differences in the shapes of the curves, and offer an explanation for these differences.
+
+Both two operations are increasing because more threads will leads to more threads accessing the critical section. More time spend on mutex/spin lock increases the cost of per operation. 
+But the cost with spin lock is much expensive than mutex because spin lock waiting longer.
+We can see from the graph that the increasing rate of spin lock is higher than mutex. The reason is that increasing the number of threads results in more threads competing for the lock, and while waiting for access the lock, the the spin lock cause the thread spinning and wasting CPU cycles, but with mutex the thread is put to sleep while waiting for the lock, so the CPU can do other tasks.
+
+
+

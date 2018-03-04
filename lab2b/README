@@ -1,0 +1,37 @@
+NAME: Bingxin Zhu
+EMAIL: bingxinzhu@ucla.edu
+ID: 704845969
+
+Zip file contains:
+1.lab2a_list.c
+2.SortedList.h
+3.SortedList.c
+4.Makefile
+5.README
+6.lab2b_1.png : throughput vs number of threads for mutex and spin-lock synchronized list operations.
+7.lab2b_2.png : mean time per mutex wait and mean time per operation for mutex-synchronized list operations.
+8.lab2b_3.png : successful iterations vs threads for each synchronization method.
+9.lab2b_4.png : throughput vs number of threads for mutex synchronized partitioned lists.
+10.lab2b_5.png : throughput vs number of threads for spin-lock-synchronized partitioned lists.
+
+QUESTION 2.3.1 - Cycles in the basic list implementation:
+(1)I think most of the cycles are spend on list operation.
+(2)Because there are a few threads so that there is less competitions. There is basically a small chance of waiting for lock and the most of time would be spent on performing the actual useful work of the program, list operations.
+(3)In the high-thread spin-lock tests, I think most of the cycles are spend on spinning. Because there are many threads trying to acquire one lock, and they must keep spinning until the lock is released.
+(4)In the high-thread mutex tests, most of the time are being spent on waiting for a lock. While waiting, it generates a system call to give up the CPU and go to sleep. Context switches between the kernel mode and user mode are very expensive. Therefore, it consumes a lot of time.
+
+QUESTION 2.3.2 - Execution Profiling:
+(1)According to profile.out, my spin-lock version thread function consumes most of the cycles.
+(2)Since acquiring the spin lock becomes very expensive which is because only one thread can hold the lock and enter the critical section, and the other threads must spin wait for the lock is available for them. Therefore, lots of time is spent on spinning.
+
+QUESTION 2.3.3 - Mutex Wait Time:
+(1)The average lock-wait time rises dramatically with the number of contending threads because with more threads, the more threads are competing with each other in order to acquire the lock, they need to wait for longer on average. 
+(2)The completion time per operation is just the time to complete the operation and doesn't include the time for all threads while they are waiting; completion time is just the wall time of the process and not the sum of the run times of all threads. Thus, the completion time per operation rises less dramatically with the number of contending threads because it does not include the time for all threads while they are waiting, which is where most of the time goes when the number of threads is high.
+(3)The wait time per operation can go up faster or higher than the completion time per operation because the wait time includes the time for all threads and is a sum of the run and wait times of all threads. Thus, since wait time includes the wait for lock time for all threads, wait time can be higher than the completion time, which does not include the wait time for all threads.
+
+QUESTION 2.3.4 - Performance of Partitioned Lists
+(1)The throughput increases as the number of lists increases. With more number of lists then for each list, the length of the sublist is smaller, therefore, the probability of contenting for a lock is decreased.
+(2)The throughput will not keep increasing even if the number of lists keeps increasing. Because when the number of lists is large enough, the probability of conflict is getting really small and then cost of lock is getting to be 0.
+(3)This is not true in the curves. Because with more sublists, the probability of conflict decreases as there are less elements in each list and it is less possible for threads to wait on the same list as when the list is much longer. With less threads, the probability of conflict also decreases as less threads are competing. However, with more sublists, the decrease for conflict is larger. 
+
+

@@ -1,0 +1,11 @@
+
+1. lab3a.c
+2. ext2_fs.h
+3. Makefile
+4. README
+
+Reference:
+In order to understand the ext2 file system, we used the following reference:
+http://cs.smith.edu/~nhowe/262/oldlabs/ext2.html
+
+And Thanks to TA’s lecture and sample code!

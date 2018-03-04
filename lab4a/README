@@ -1,0 +1,16 @@
+NAME:Bingxin Zhu
+EMAIL: bingxinzhu95@gmail.com
+ID: 704845969
+
+My mac can't connect the usb so I use Wi-Fi to finish this assignment. Because my board is still on the way so I do this homework with my classmate Amir Saad.
+The serial number of my Beaglebone is BBGW16062494
+the WiFi is using my ceilphone's hotspot. Because we are at school at that time and it doesn't allow us to put both account name and password, it only allows for password which is not we usually do to access school WiFi.
+The mac address is 
+HWaddr 2c:f7:f1:06:51:fc
+File Description:
+1 my_beaglebone.jpg is just my selfie.
+2 connect.jpg: I changed the name in the file and then reboot and then it changes. Then I typed "ifconfig"
+3 copy.png: here I use scp command to copy a hello world program from my laptop to my Beaglebone
+4 build_run.png: build and run the program
+5 git.png: I install git and then git clone a repository here.
+
